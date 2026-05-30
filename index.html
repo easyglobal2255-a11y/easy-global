@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" id="app-html">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Easy Global | لتطوير برامج الـ APK</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@300;500;700&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <style>
+        :root {
+            --bg-main: #0b0f19;
+            --bg-card: #131926;
+            --primary-neon: #00e5ff; 
+            --accent-gold: #ffd700;
+            --text-white: #f8fafc;
+            --text-muted: #94a3b8;
+        }
+
+        /* تصفير الهوامش لجميع العناصر ما عدا القائمة */
+        *:not(nav):not(nav *):not(header) { 
+            box-sizing: border-box; margin: 0; padding: 0; transition: all 0.3s ease; 
+        }
+
+        nav, nav *, header { box-sizing: border-box; margin: 0; padding: 0; transition: none !important; }
+
+        body {
+            font-family: 'Noto Sans Arabic', 'Poppins', sans-serif;
+            background-color: var(--bg-main); color: var(--text-white);
+            line-height: 1.6; overflow-x: hidden; 
+            padding-top: 190px; /* 🚨 نزلنا المحتوى بالكامل لتحت مسافة أكبر لمنع أي تداخل */
+        }
+
+        /* الهيدر */
+        header {
+            display: flex; justify-content: center; align-items: center; padding: 25px 5%; 
+            background: rgba(11, 15, 25, 0.95); backdrop-filter: blur(15px);
+            position: fixed; width: 100%; top: 0; z-index: 1000; border-bottom: 1px solid rgba(0, 229, 255, 0.15);
+        }
+
+        .logo-area { display: flex; align-items: center; gap: 15px; text-decoration: none; }
+        
+        /* حجم اللوجو المعتمد الكبير */
+        .official-logo-icon {
+            width: 55px; height: 55px; border-radius: 50%; border: 2.5px solid var(--primary-neon);
+            background: radial-gradient(circle, #1e293b 0%, #0f172a 100%); display: flex; justify-content: center; align-items: center;
+            box-shadow: 0 0 20px rgba(0, 229, 255, 0.4); color: var(--primary-neon); font-size: 24px;
+        }
+        
+        /* حجم اسم الموقع الكبير (Easy Global) */
+        .logo-text { font-size: 34px; font-weight: 700; color: var(--text-white); }
+        .logo-text span { color: var(--primary-neon); }
+
+        /* لغات الموقع على اليسار */
+        .lang-selector-container {
+            position: absolute; left: 5%; display: flex; align-items: center; gap: 8px;
+            background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(0, 229, 255, 0.2); padding: 6px 14px; border-radius: 20px;
+        }
+        body.ltr .lang-selector-container { left: auto; right: 5%; }
+        .lang-select { background: transparent; border: none; color: var(--text-white); font-weight: 600; font-size: 14px; cursor: pointer; outline: none; font-family: 'Poppins', sans-serif; }
+        .lang-select option { background: var(--bg-card); color: #fff; }
+
+        /* القائمة الجانبية الثابتة تماماً على اليمين دائماً */
+        nav {
+            position: fixed !important;
+            right: 2% !important; 
+            top: 280px !important; /* نزلنا القائمة شوية تماشياً مع نزول الهيرو */
+            z-index: 999 !important;
+            background: rgba(19, 25, 38, 0.9) !important; 
+            backdrop-filter: blur(12px) !important;
+            padding: 20px 12px !important;
+            border-radius: 16px !important;
+            border: 1px solid rgba(0, 229, 255, 0.2) !important;
+            box-shadow: 0 15px 35px rgba(0, 229, 255, 0.15) !important;
+        }
+        body.ltr nav { right: auto !important; left: 2% !important; } 
+
+        nav ul { display: flex !important; flex-direction: column !important; gap: 12px !important; list-style: none !important; }
+        nav ul li a { 
+            color: var(--text-white) !important; text-decoration: none !important; font-weight: 500 !important; font-size: 14px !important; 
+            padding: 10px 12px !important; border-radius: 10px !important; display: flex !important; align-items: center !important; gap: 10px !important; min-width: 150px;
+        }
+        nav ul li a:hover { background: rgba(0, 229, 255, 0.15) !important; color: var(--primary-neon) !important; }
+        nav ul li a i { color: var(--primary-neon) !important; font-size: 16px; width: 20px; text-align: center; }
+
+        /* مسافات الأقسام بعد إنزال الكلام */
+        .hero { height: 50vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 0 18% 0 5%; }
+        body.ltr .hero { padding: 0 5% 0 18%; }
+        .hero h1 { font-size: 48px; margin-bottom: 25px; line-height: 1.3; }
+        .hero h1 span { color: var(--primary-neon); text-shadow: 0 0 25px rgba(0, 229, 255, 0.5); }
+        .hero p { font-size: 19px; color: var(--text-muted); max-width: 800px; margin-bottom: 35px; }
+
+        /* زر رئيسي بدون سهم أو أيقونة صاروخ */
+        .cta-btn {
+            background: linear-gradient(135deg, var(--primary-neon), #00b8d4); color: #000;
+            padding: 15px 35px; border-radius: 30px; text-decoration: none; font-weight: 700; font-size: 18px;
+            box-shadow: 0 5px 20px rgba(0, 229, 255, 0.4); display: inline-flex; align-items: center; justify-content: center;
+        }
+        .cta-btn:hover { transform: translateY(-4px); box-shadow: 0 10px 30px rgba(0, 229, 255, 0.6); }
+
+        .about-apk { padding: 100px 18% 80px 5%; text-align: center; }
+        body.ltr .about-apk { padding: 100px 5% 80px 18%; }
+        .about-apk-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 25px; margin-top: 40px; }
+        .apk-card { background-color: var(--bg-card); padding: 35px 25px; border-radius: 15px; border: 1px solid rgba(255, 255, 255, 0.02); }
+        .apk-card i { font-size: 35px; color: var(--primary-neon); margin-bottom: 15px; }
+
+        .portfolio { padding: 100px 18% 80px 5%; }
+        body.ltr .portfolio { padding: 100px 5% 80px 18%; }
+        .app-box { background: linear-gradient(145deg, #131926, #1e293b); border-radius: 25px; padding: 45px; border: 1px solid rgba(0, 229, 255, 0.2); position: relative; overflow: hidden; text-align: right; }
+        body.ltr .app-box { text-align: left; }
+        .app-box::before { content: attr(data-badge); position: absolute; top: 25px; right: -40px; background: var(--accent-gold); color: #000; padding: 6px 45px; transform: rotate(45deg); font-size: 13px; font-weight: bold; }
+        body.ltr .app-box::before { right: auto; left: -40px; transform: rotate(-45deg); }
+        .app-info h3 { font-size: 34px; margin-bottom: 15px; }
+        .app-info h3 span { color: var(--primary-neon); }
+        .app-info p { color: var(--text-muted); font-size: 17px; margin-bottom: 25px; }
+        .tag { background: rgba(0, 229, 255, 0.1); color: var(--primary-neon); padding: 6px 18px; border-radius: 20px; font-size: 13px; font-weight: bold; display: inline-block; margin-bottom: 20px; }
+
+        .videos-section { padding: 100px 18% 80px 5%; text-align: center; }
+        body.ltr .videos-section { padding: 100px 5% 80px 18%; }
+        .video-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 25px; margin-top: 30px; }
+        .video-card { background: var(--bg-card); border-radius: 15px; overflow: hidden; }
+        .video-wrapper { position: relative; padding-bottom: 56.25%; height: 0; background: #000; }
+        .video-wrapper iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; }
+        .video-info { padding: 15px; text-align: right; }
+        body.ltr .video-info { text-align: left; }
+
+        .contact-section { padding: 100px 18% 80px 5%; text-align: center; }
+        body.ltr .contact-section { padding: 100px 5% 80px 18%; }
+        .contact-container { background: var(--bg-card); max-width: 550px; margin: 30px auto 0 auto; padding: 35px; border-radius: 20px; border: 1px solid rgba(0, 229, 255, 0.1); }
+        .contact-item { display: flex; align-items: center; gap: 15px; margin-bottom: 15px; font-size: 17px; justify-content: center; }
+        .contact-item i { color: var(--primary-neon); font-size: 20px; width: 25px; text-align: center; }
+        .contact-item a { color: var(--text-white); text-decoration: none; }
+        .contact-item a:hover { color: var(--primary-neon); }
+
+        footer { background-color: #070a10; padding: 35px 8%; text-align: center; border-top: 1px solid rgba(255, 255, 255, 0.03); color: var(--text-muted); }
+        /* ==========レスポンシブ (RWD) ========== */
+        @media (max-width: 992px) {
+            body { padding-top: 100px; }
+            header { padding: 15px 4%; }
+            .official-logo-icon { width: 40px; height: 40px; font-size: 18px; }
+            .logo-text { font-size: 22px; }
+            .lang-selector-container { position: static; margin-right: auto; }
+            body.ltr .lang-selector-container { margin-right: 0; margin-left: auto; }
+
+            .hero h1 { font-size: 32px; }
+            .hero p { font-size: 16px; }
+
+            nav { display: none; }
+            .mobile-menu-btn {
+                display: flex !important; position: fixed; top: 18px; right: 18px; z-index: 2000;
+                background: var(--bg-card); border: 1px solid rgba(0,229,255,0.3);
+                color: var(--text-white); font-size: 24px; padding: 10px 14px;
+                border-radius: 12px; cursor: pointer;
+            }
+            body.ltr .mobile-menu-btn { right: auto; left: 18px; }
+            .mobile-menu-btn:hover { background: rgba(0,229,255,0.1); }
+
+            nav.mobile-open {
+                display: flex !important;
+                position: fixed !important; top: 0 !important; right: 0 !important; left: 0 !important;
+                width: 100% !important; height: 100vh !important;
+                background: rgba(11,15,25,0.98) !important;
+                backdrop-filter: blur(20px) !important;
+                flex-direction: column; justify-content: center; align-items: center;
+                border-radius: 0 !important; border: none !important;
+                z-index: 1500 !important;
+            }
+            body.ltr nav.mobile-open { right: 0 !important; left: 0 !important; }
+            nav.mobile-open ul { flex-direction: column !important; gap: 20px !important; }
+            nav.mobile-open ul li a { font-size: 20px !important; padding: 15px 30px !important; min-width: auto; }
+
+            .hero, body.ltr .hero,
+            .about-apk, body.ltr .about-apk,
+            .portfolio, body.ltr .portfolio,
+            .videos-section, body.ltr .videos-section,
+            .contact-section, body.ltr .contact-section {
+                padding: 60px 5% !important;
+            }
+            .hero { height: auto; min-height: 60vh; padding-top: 100px !important; }
+        }
+
+        @media (max-width: 480px) {
+            .official-logo-icon { width: 34px; height: 34px; font-size: 14px; }
+            .logo-text { font-size: 18px; }
+            header { padding: 10px 4%; }
+            .lang-select { font-size: 12px; }
+            .lang-selector-container { padding: 4px 10px; gap: 5px; }
+
+            .hero h1 { font-size: 24px; }
+            .hero p { font-size: 14px; }
+            .cta-btn { padding: 12px 24px; font-size: 15px; }
+
+            .about-apk-grid { grid-template-columns: 1fr; }
+            .video-grid { grid-template-columns: 1fr; }
+            .app-box { padding: 25px 20px; }
+            .app-info h3 { font-size: 24px; }
+            .contact-container { padding: 20px 15px; }
+
+            .mobile-menu-btn { top: 12px; right: 12px; font-size: 20px; padding: 8px 12px; }
+            body.ltr .mobile-menu-btn { right: auto; left: 12px; }
+        }
+
+        .mobile-menu-btn { display: none; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo-area">
+            <div class="official-logo-icon"><i class="fa-solid fa-arrows-spin"></i></div>
+            <div class="logo-text">Easy <span>Global</span></div>
+        </div>
+        
+        <div class="lang-selector-container">
+            <i class="fa-solid fa-globe"></i>
+            <select class="lang-select" onchange="changeWebsiteLanguage(this.value)">
+                <option value="ar">العربية</option>
+                <option value="en">English</option>
+                <option value="tr">Türkçe</option>
+                <option value="de">Deutsch</option>
+                <option value="fr">Français</option>
+                <option value="es">Español</option>
+                <option value="ru">Русский</option>
+                <option value="zh">中文</option>
+            </select>
+        </div>
+    </header>
+
+    <nav>
+        <ul>
+            <li><a href="#hero"><i class="fa-solid fa-house"></i> <span id="nav-home">الرئيسية</span></a></li>
+            <li><a href="#about"><i class="fa-solid fa-gears"></i> <span id="nav-about">تخصصنا</span></a></li>
+            <li><a href="#first-app"><i class="fa-solid fa-code-branch"></i> <span id="nav-releases">الإصدارات</span></a></li>
+            <li><a href="#videos"><i class="fa-solid fa-video"></i> <span id="nav-videos">العروض المرئية</span></a></li>
+            <li><a href="#contact"><i class="fa-solid fa-envelope"></i> <span id="nav-contact">التواصل</span></a></li>
+        </ul>
+    </nav>
+
+    <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="فتح القائمة">
+        <i class="fa-solid fa-bars"></i>
+    </button>
+
+    <section class="hero" id="hero">
+        <h1 id="hero-title">مختبرات <span>Easy Global</span> لتطوير برامج الـ APK</h1>
+        <p id="hero-desc">نحن مؤسسة برمجية متخصصة في هندسة وبناء ملفات APK مخصصة لأنظمة الأندرويد. نحول الأفكار المعقدة إلى برامج خفيفة الوزن، فائقة الأداء، وذكية بالكامل.</p>
+        <a href="#first-app" class="cta-btn" id="hero-btn"><span id="hero-btn-text">استكشف أول إنتاجاتنا</span></a>
+    </section>
+
+    <section class="about-apk" id="about">
+        <h2 id="about-title" style="font-size: 32px; margin-bottom: 20px;">لماذا برامج <span>Easy Global</span>؟</h2>
+        <div class="about-apk-grid">
+            <div class="apk-card">
+                <i class="fa-solid fa-box-archive"></i>
+                <h3 id="card1-title">ملفات APK محسنة</h3>
+                <p id="card1-desc">حجم ملفات مضغوط ومناسب لجميع مساحات التخزين دون أدنى تأثير على سرعة العتاد.</p>
+            </div>
+            <div class="apk-card">
+                <i class="fa-solid fa-bolt-lightning"></i>
+                <h3 id="card2-title">استجابة فائقة السرعة</h3>
+                <p id="card2-desc">بناء برمجيات خالية من التعليق ومتوافقة مع خوادم السحاب بشكل فوري ومباشر.</p>
+            </div>
+            <div class="apk-card">
+                <i class="fa-solid fa-headphones-simple"></i>
+                <h3 id="card3-title">دعم الأجهزة الخارجية</h3>
+                <p id="card3-desc">نتميز بقدرة برامجنا على التفاعل الذكي مع البلوتوث والسماعات الذكية باحترافية.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="portfolio" id="first-app">
+        <div style="text-align: center; margin-bottom: 40px;">
+            <h2 style="font-size: 36px;" id="app-section-title">أول إصدار رسمي من <span>الشركة</span></h2>
+        </div>
+        
+        <div class="app-box" id="app-card-box" data-badge="إصدار رقم #1">
+            <div class="app-info">
+                <span class="tag" id="app-tag"><i class="fa-solid fa-certificate"></i> مشروعنا الأول والافتتاحي</span>
+                <h3>تطبيق <span>Easy Translate</span></h3>
+                <p id="app-desc">هو أول تطبيق APK رسمي تطلقه شركة Easy Global. تم تصميمه خصيصاً لحل مشاكل الترجمة الفورية بين شخصين وجهاً لوجه عبر واجهة مقسمة ومبتكرة. التطبيق يدعم ربط ومزامنة سماعات البلوتوث الذكية لتوجيه قنوات الصوت والمايك الخارجي بدقة متناهية.</p>
+                <a href="#" class="cta-btn" style="font-size: 16px; padding: 12px 35px;"><span id="app-btn-text">تحميل ملف الـ APK المباشر</span></a>
+            </div>
+        </div>
+    </section>
+
+    <section class="videos-section" id="videos">
+        <h2 id="video-section-title" style="font-size: 32px; margin-bottom: 20px;">العروض المرئية <span>والتوضيحية</span></h2>
+        <div class="video-grid">
+            <div class="video-card">
+                <div class="video-wrapper">
+                    <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ" allowfullscreen></iframe>
+                </div>
+                <div class="video-info">
+                    <h4 id="vid1-title">العرض الترويجي الرسمي لـ Easy Translate</h4>
+                    <p id="vid1-desc">فيديو يستعرض ميزة الـ Split Screen وتوجيه الصوت عبر سماعات البلوتوث الذكية وجهاً لوجه.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="contact-section" id="contact">
+        <h2 id="contact-title" style="font-size: 32px;">تواصل مع <span>Easy Global</span></h2>
+        <div class="contact-container">
+            <div class="contact-item">
+                <i class="fa-solid fa-envelope" style="color: #ea4335;"></i>
+                <a href="mailto:easyglobal2255@gmail.com"><span>easyglobal2255@gmail.com</span></a>
+            </div>
+            <div class="contact-item">
+                <i class="fa-brands fa-whatsapp" style="color: #25d366;"></i>
+                <a href="https://wa.me/201044061122" target="_blank"><span>واتساب: 01044061122</span></a>
+            </div>
+            <div class="contact-item">
+                <i class="fa-solid fa-headset"></i>
+                <span id="contact-support">الدعم الفني لملفات APK متاح 24/7</span>
+            </div>
+        </div>
+    </section>
+
+    <footer id="footer-text">
+        &copy; 2026 جميع الحقوق محفوظة لـ Easy Global | متخصصون في ابتكار الـ APK
+    </footer>
+
+    <script>
+        const allLanguagesData = {
+            ar: {
+                dir: "rtl", class: "rtl",
+                navHome: "الرئيسية", navAbout: "تخصصنا", navReleases: "الإصدارات", navVideos: "العروض المرئية", navContact: "التواصل",
+                heroTitle: "مختبرات <span>Easy Global</span> لتطوير برامج الـ APK",
+                heroDesc: "نحن مؤسسة برمجية متخصصة في هندسة وبناء ملفات APK مخصصة لأنظمة الأندرويد. نحول الأفكار المعقدة إلى برامج خفيفة الوزن، فائقة الأداء، وذكية بالكامل.",
+                heroBtnText: "استكشف أول إنتاجاتنا",
+                aboutTitle: "لماذا برامج <span>Easy Global</span>؟",
+                card1Title: "ملفات APK محسنة", card1Desc: "حجم ملفات مضغوط ومناسب لجميع مساحات التخزين دون أدنى تأثير على سرعة العتاد.",
+                card2Title: "استجابة فائقة السرعة", card2Desc: "بناء برمجيات خالية من التعليق ومتوافقة مع خوادم السحاب بشكل فوري ومباشر.",
+                card3Title: "دعم الأجهزة الخارجية", card3Desc: "نتميز بقدرة برامجنا على التفاعل الذكي مع البلوتوث والسماعات الذكية باحترافية.",
+                appSectionTitle: "أول إصدار رسمي من <span>الشركة</span>",
+                appTag: "مشروعنا الأول والافتتاحي", appDesc: "هو أول تطبيق APK رسمي تطلقه شركة Easy Global. تم تصميمه خصيصاً لحل مشاكل الترجمة الفورية بين شخصين وجهاً لوجه عبر واجهة مقسمة ومبتكرة. التطبيق يدعم ربط ومزامنة سماعات البلوتوث الذكية لتوجيه قنوات الصوت والمايك الخارجي بدقة متناهية.",
+                appBtnText: "تحميل ملف الـ APK المباشر", badge: "إصدار رقم #1",
+                videoSectionTitle: "العروض المرئية <span>والتوضيحية</span>",
+                vid1Title: "العرض الترويجي الرسمي لـ Easy Translate",
+                vid1Desc: "فيديو يستعرض ميزة الـ Split Screen وتوجيه الصوت عبر سماعات البلوتوث الذكية وجهاً لوجه.",
+                contactTitle: "تواصل مع <span>Easy Global</span>", contactSupport: "الدعم الفني لملفات APK متاح 24/7",
+                footerText: "&copy; 2026 جميع الحقوق محفوظة لـ Easy Global | متخصصون في ابتكار الـ APK"
+            },
+            en: {
+                dir: "ltr", class: "en",
+                navHome: "Home", navAbout: "Expertise", navReleases: "Releases", navVideos: "Showcase", navContact: "Contact",
+                heroTitle: "<span>Easy Global</span> Labs for APK Development",
+                heroDesc: "We are a software enterprise specialized in engineering custom APK files for Android Systems. We transform complex concepts into lightweight, high-performance, and fully intelligent applications.",
+                heroBtnText: "Explore Our First Production",
+                aboutTitle: "Why <span>Easy Global</span> Software?",
+                card1Title: "Optimized APKs", card1Desc: "Compact file sizes tailored for all storage capacities without compromising on hardware speed.",
+                card2Title: "Ultra-Fast Response", card2Desc: "Building lag-free software that seamlessly communicates with cloud servers in real-time.",
+                card3Title: "External Device Support", card3Desc: "Our software excels at interfacing with external hardware, including Bluetooth devices and smart earbuds.",
+                appSectionTitle: "Our First Official <span>Production</span>",
+                appTag: "Our First & Flagship Project", appDesc: "Easy Translate is the first official APK application launched by Easy Global. It is purposefully engineered to resolve face-to-face instant translation challenges via an innovative split-screen interface. The application features native Bluetooth SCO synchronization to route audio and mic channels with ultimate precision.",
+                appBtnText: "Download Direct APK File", badge: "Release #1",
+                videoSectionTitle: "Visual <span>Showcase & Demos</span>",
+                vid1Title: "Official Promo for Easy Translate",
+                vid1Desc: "A walkthrough showcasing split-screen features and hardware audio routing over smart Bluetooth earbuds.",
+                contactTitle: "Contact <span>Easy Global</span>", contactSupport: "APK Technical Support available 24/7",
+                footerText: "All Rights Reserved &copy; 2026 Easy Global | APK Innovation Specialists"
+            },
+            tr: {
+                dir: "ltr", class: "en",
+                navHome: "Anasayfa", navAbout: "Uzmanlık", navReleases: "Sürümler", navVideos: "Videolar", navContact: "İletişim",
+                heroTitle: "<span>Easy Global</span> APK Laboratuvarları",
+                heroDesc: "Android Sistemleri için özel APK dosyaları mühendisliğinde uzmanlaşmış bir yazılım kuruluşuyuz.",
+                heroBtnText: "İlk Üretimimizi Keşfedin",
+                aboutTitle: "Neden <span>Easy Global</span> Yazılımı?",
+                card1Title: "Optimize Edilmiş APK'lar", card1Desc: "Donanım hızından ödün vermeden kompakt dosya boyutları.",
+                card2Title: "Ultra Hızlı Yanıt", card2Desc: "Bulut sunucularıyla gerçek zamanlı iletişim kuran gecikmesiz yazılımlar.",
+                card3Title: "Harici Cihaz Desteği", card3Desc: "Bluetooth cihazları ve akıllı kulaklıklar ile tam entegrasyon.",
+                appSectionTitle: "İlk Resmi <span>Sürümümüz</span>",
+                appTag: "İlk Projemiz", appDesc: "Easy Translate, Easy Global tarafından başlatılan ilk resmi APK uygulamasıdır.",
+                appBtnText: "Doğrudan APK İndir", badge: "Sürüm #1",
+                videoSectionTitle: "Görsel <span>Gösteri</span>",
+                vid1Title: "Easy Translate için Resmi Tanıtım",
+                vid1Desc: "Bölünmüş ekran özelliklerini gösteren bir kılavuz.",
+                contactTitle: "<span>Easy Global</span> ile İletişime Geçin", contactSupport: "APK Teknik Desteği 7/24 Hizmetinizdedir",
+                footerText: "Tüm Hakları Saklıdır &copy; 2026 Easy Global | APK Uzmanları"
+            },
+            de: {
+                dir: "ltr", class: "en",
+                navHome: "Startseite", navAbout: "Expertise", navReleases: "Releases", navVideos: "Videos", navContact: "Kontakt",
+                heroTitle: "<span>Easy Global</span> Labs für APK-Entwicklung",
+                heroDesc: "Wir sind ein Softwareunternehmen, das auf die Entwicklung maßgeschneiderter APK-Dateien für Android-Systeme spezialisiert ist.",
+                heroBtnText: "Erkunden Sie unsere erste Produktion",
+                aboutTitle: "Warum <span>Easy Global</span> Software?",
+                card1Title: "Optimierte APKs", card1Desc: "Sehr kompakte Dateigrößen ohne Beeinträchtigung der Geschwindigkeit.",
+                card2Title: "Ultra-schnelle Reaktion", card2Desc: "Erstellung verzögerungsfreier Software mit Cloud-Server-Kommunikation.",
+                card3Title: "Unterstützung externer Geräte", card3Desc: "Schnittstelle zu externer Hardware wie Bluetooth-Geräten.",
+                appSectionTitle: "Unsere erste offizielle <span>Veröffentlichung</span>",
+                appTag: "Unser Flaggschiff-Projekt", appDesc: "Easy Translate ist die erste offizielle APK-Anwendung von Easy Global.",
+                appBtnText: "Direkte APK herunterladen", badge: "Release #1",
+                videoSectionTitle: "Präsentation <span>& Demos</span>",
+                vid1Title: "Offizielles Promo-Video für Easy Translate",
+                vid1Desc: "Eine Demonstration der Split-Screen-Funktionen.",
+                contactTitle: "Kontaktieren Sie <span>Easy Global</span>", contactSupport: "Technischer APK-Support rund um die Uhr verfügbar",
+                footerText: "Alle Rechte vorbehalten &copy; 2026 Easy Global | APK-Innovation"
+            },
+            fr: {
+                dir: "ltr", class: "en",
+                navHome: "Accueil", navAbout: "Expertise", navReleases: "Versions", navVideos: "Vidéos", navContact: "Contact",
+                heroTitle: "Laboratoires <span>Easy Global</span> pour le développement APK",
+                heroDesc: "Nous sommes une entreprise logicielle spécialisée dans l'ingénierie de fichiers APK personnalisés pour les systèmes Android.",
+                heroBtnText: "Découvrez notre première production",
+                aboutTitle: "Pourquoi choisir <span>Easy Global</span> ?",
+                card1Title: "APKs optimisés", card1Desc: "Tailles de fichiers compactes adaptées à toutes les capacités.",
+                card2Title: "Réponse ultra-rapide", card2Desc: "Création de logiciels sans latence connectés en temps réel au cloud.",
+                card3Title: "Support des appareils", card3Desc: "Interface poussée avec le matériel externe et le Bluetooth.",
+                appSectionTitle: "Notre première <span>version</span> officielle",
+                appTag: "Notre premier projet phare", appDesc: "Easy Translate est la première application APK officielle lancée par Easy Global.",
+                appBtnText: "Télécharger l'APK direct", badge: "Version #1",
+                videoSectionTitle: "Présentation <span>& démos</span>",
+                vid1Title: "Promo officielle pour Easy Translate",
+                vid1Desc: "Une démonstration des fonctionnalités d'écran partagé.",
+                contactTitle: "Contacter <span>Easy Global</span>", contactSupport: "Support technique APK disponible 24h/24, 7j/7",
+                footerText: "Tous droits réservés &copy; 2026 Easy Global | Innovation APK"
+            },
+            es: {
+                dir: "ltr", class: "en",
+                navHome: "Inicio", navAbout: "Experiencia", navReleases: "Lanzamientos", navVideos: "Videos", navContact: "Contacto",
+                heroTitle: "Laboratorios <span>Easy Global</span> para el Desarrollo de APK",
+                heroDesc: "Somos una empresa de software especializada en la ingeniería de archivos APK personalizados para sistemas Android.",
+                heroBtnText: "Explore Nuestra Primera Producción",
+                aboutTitle: "¿Por qué elegir <span>Easy Global</span>?",
+                card1Title: "APKs Optimizados", card1Desc: "Tamaños de archivo compactos sin comprometer el hardware.",
+                card2Title: "Respuesta Ultra Rápida", card2Desc: "Software sin lag comunicado en tiempo real con la nube.",
+                card3Title: "Soporte de Dispositivos", card3Desc: "Nuestra app destaca en la interfaz con hardware externo y Bluetooth.",
+                appSectionTitle: "Nuestro Primer <span>Lanzamiento</span> Oficial",
+                appTag: "Nuestro Proyecto Emblemático", appDesc: "Easy Translate es la primera aplicación APK oficial lanzada por Easy Global.",
+                appBtnText: "Descargar APK Directo", badge: "Edición #1",
+                videoSectionTitle: "Exhibición <span>y Demos</span>",
+                vid1Title: "Promo Oficial de Easy Translate",
+                vid1Desc: "Un recorrido que muestra las funciones de pantalla dividida.",
+                contactTitle: "Contacte con <span>Easy Global</span>", contactSupport: "Soporte técnico de APK disponible 24/7",
+                footerText: "Todos los derechos reservados &copy; 2026 Easy Global | Especialistas APK"
+            },
+            ru: {
+                dir: "ltr", class: "en",
+                navHome: "Главная", navAbout: "Экспертиза", navReleases: "Релизы", navVideos: "Видео", navContact: "Контакты",
+                heroTitle: "Лаборатории <span>Easy Global</span> по разработке APK",
+                heroDesc: "Мы — софтверное предприятие, специализирующееся на проектировании пользовательских файлов APK для систем Android.",
+                heroBtnText: "Изучите нашу первую продукцию",
+                aboutTitle: "Почему стоит выбрать <span>Easy Global</span>?",
+                card1Title: "Оптимизированные APK", card1Desc: "Компактные размеры файлов без ущерба для скорости.",
+                card2Title: "Ультрабыстрый отклик", card2Desc: "Создание программного обеспечения без задержек с поддержкой облака.",
+                card3Title: "Поддержка устройств", card3Desc: "Отличное взаимодействие с внешним оборудованием и Bluetooth.",
+                appSectionTitle: "Наш первый официальный <span>Релиз</span>",
+                appTag: "Наш флагманский проект", appDesc: "Easy Translate — первое официальное APK-приложение, выпущенное Easy Global.",
+                appBtnText: "Скачать прямой APK", badge: "Выпуск #1",
+                videoSectionTitle: "Демонстрация <span>и демо</span>",
+                vid1Title: "Официальное промо для Easy Translate",
+                vid1Desc: "Пошаговое руководство, демонстрирующее функции разделенного экрана.",
+                contactTitle: "Связаться с <span>Easy Global</span>", contactSupport: "Техническая поддержка APK доступна 24/7",
+                footerText: "Все права защищены &copy; 2026 Easy Global | Эксперты APK"
+            },
+            zh: {
+                dir: "ltr", class: "en",
+                navHome: "首页", navAbout: "专业技术", navReleases: "版本发布", navVideos: "视频展示", navContact: "联系我们",
+                heroTitle: "<span>Easy Global</span> APK 开发实验室",
+                heroDesc: "我们是一家专注于为 Android 系统设计定制 APK 文件的软件企业。",
+                heroBtnText: "探索我们的首款 product",
+                aboutTitle: "为什么选择 <span>Easy Global</span>？",
+                card1Title: "优化的 APK", card1Desc: "极度紧凑的文件大小，专为所有存储容量量身定制，绝不影响硬件速度。",
+                card2Title: "超快响应", card2Desc: "构建无延迟软件，与云端服务器进行实时通信。",
+                card3Title: "外部设备支持", card3Desc: "我们的软件在与外部硬件及蓝牙对接方面表现出色。",
+                appSectionTitle: "我们的首个官方<span>版本</span>",
+                appTag: "核心旗舰项目", appDesc: "Easy Translate 是 Easy Global 推出的首款官方 APK 应用程序。",
+                appBtnText: "下载直接 APK 文件", badge: "版本 #1",
+                videoSectionTitle: "视觉<span>展示与演示</span>",
+                vid1Title: "Easy Translate 官方宣传片",
+                vid1Desc: "演练展示了分屏功能以及蓝牙音频路由。",
+                contactTitle: "联系 <span>Easy Global</span>", contactSupport: "APK 技术支持 24/7 全天候在线",
+                footerText: "版权所有 &copy; 2026 Easy Global | APK 创新专家"
+            }
+        };
+
+        const mobileBtn = document.getElementById('mobileMenuBtn');
+        const navEl = document.querySelector('nav');
+        mobileBtn.addEventListener('click', function() {
+            navEl.classList.toggle('mobile-open');
+            const icon = mobileBtn.querySelector('i');
+            icon.className = navEl.classList.contains('mobile-open') ? 'fa-solid fa-xmark' : 'fa-solid fa-bars';
+        });
+        document.querySelectorAll('nav ul li a').forEach(link => {
+            link.addEventListener('click', () => {
+                navEl.classList.remove('mobile-open');
+                mobileBtn.querySelector('i').className = 'fa-solid fa-bars';
+            });
+        });
+
+        function changeWebsiteLanguage(langCode) {
+            const data = allLanguagesData[langCode];
+            const htmlTag = document.getElementById('app-html');
+            const bodyTag = document.body;
+            
+            htmlTag.setAttribute('dir', data.dir);
+            htmlTag.setAttribute('lang', langCode);
+            
+            if (data.class === 'en') {
+                bodyTag.classList.add('ltr');
+            } else {
+                bodyTag.classList.remove('ltr');
+            }
+
+            document.getElementById('nav-home').innerText = data.navHome;
+            document.getElementById('nav-about').innerText = data.navAbout;
+            document.getElementById('nav-releases').innerText = data.navReleases;
+            document.getElementById('nav-videos').innerText = data.navVideos;
+            document.getElementById('nav-contact').innerText = data.navContact;
+
+            document.getElementById('hero-title').innerHTML = data.heroTitle;
+            document.getElementById('hero-desc').innerText = data.heroDesc;
+            document.getElementById('hero-btn-text').innerText = data.heroBtnText;
+            document.getElementById('about-title').innerHTML = data.aboutTitle;
+            document.getElementById('card1-title').innerText = data.card1Title;
+            document.getElementById('card1-desc').innerText = data.card1Desc;
+            document.getElementById('card2-title').innerText = data.card2Title;
+            document.getElementById('card2-desc').innerText = data.card2Desc;
+            document.getElementById('card3-title').innerText = data.card3Title;
+            document.getElementById('card3-desc').innerText = data.card3Desc;
+            document.getElementById('app-section-title').innerHTML = data.appSectionTitle;
+            document.getElementById('app-tag').innerHTML = `<i class="fa-solid fa-certificate"></i> ${data.appTag}`;
+            document.getElementById('app-desc').innerText = data.appDesc;
+            document.getElementById('app-btn-text').innerText = data.appBtnText;
+            document.getElementById('app-card-box').setAttribute('data-badge', data.badge);
+            document.getElementById('video-section-title').innerHTML = data.videoSectionTitle;
+            document.getElementById('vid1-title').innerText = data.vid1Title;
+            document.getElementById('vid1-desc').innerText = data.vid1Desc;
+            document.getElementById('contact-title').innerHTML = data.contactTitle;
+            document.getElementById('contact-support').innerText = data.contactSupport;
+            document.getElementById('footer-text').innerHTML = data.footerText;
+        }
+    </script>
+</body>
+</html>
